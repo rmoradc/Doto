@@ -19,6 +19,7 @@ import "./Calendar.css";
 import "../Pages.css";
 import { v4 as uuidv4 } from "uuid";
 import { Themes } from "../../../constants/Themes";
+import SideBar from "./SideBar";
 
 const classnames = require("classnames");
 
@@ -100,7 +101,9 @@ const Calendar = () => {
                     "left-side-bar",
                     theme === Themes.DARK ? "left-side-bg-blue" : "left-side-bg-green",
                 )}
-            />
+            >
+                <SideBar />
+            </div>
             <div className="calendar-buttons">
                 <div className="mb-3">
                     <Tooltip title="Add Task">

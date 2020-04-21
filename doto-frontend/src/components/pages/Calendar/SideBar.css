@@ -1,0 +1,11 @@
+.palette-box {
+    background-color: rgb(117, 244, 253);
+}
+
+.draggable-task {
+    background-color: cornflowerblue;
+    width: 7vh;
+    margin-top: 1vh;
+    padding: 1vh;
+    border-radius: 5%;
+}
