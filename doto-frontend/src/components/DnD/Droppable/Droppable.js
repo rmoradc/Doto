@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Droppable = props => {
+function Droppable(props) {
     const drop = e => {
         e.preventDefault();
         this.props.handleOpen();
@@ -12,16 +12,15 @@ const Droppable = props => {
     };
 
     return (
-        <div id={this.props.id} onDrop={drop} onDragOver={allowDrop} className={this.props.className}>
-            {this.props.children}
+        <div id={props.id} onDrop={drop} onDragOver={allowDrop} className={props.className}>
+            {props.children}
         </div>
     );
-};
+}
 
 Droppable.propTypes = {
     id: PropTypes.string,
     children: PropTypes.node,
     className: PropTypes.string,
 };
-
 export default Droppable;
