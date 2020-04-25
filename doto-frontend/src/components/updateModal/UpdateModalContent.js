@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "date-fns";
 import Button from "@material-ui/core/Button";
 import DateFnsUtils from "@date-io/date-fns";
@@ -10,8 +10,8 @@ import Select from "@material-ui/core/Select";
 import { MuiPickersUtilsProvider, KeyboardDateTimePicker, KeyboardTimePicker } from "@material-ui/pickers";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
-import "./ModalContent.css";
-import { Themes } from "../constants/Themes";
+import "./UpdateModalContent.css";
+import { Themes } from "../../constants/Themes";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -32,13 +32,12 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const ModalContent = props => {
+const UpdateModalContent = props => {
     const classes = useStyles();
 
-    const [selectedName, setSelectedName] = useState("TASK - " + new Date());
-    const [selectedDescription, setSelectedDescription] = useState("");
+    const [selectedName, setSelectedName] = useState(props.taskToUpdate.title);
+    const [selectedDescription, setSelectedDescription] = useState(props.taskToUpdate.description);
     const [selectedDueDate, setSelectedDueDate] = useState(new Date());
-    const [selectedEarliestDate, setEarliestDate] = useState(new Date());
 
     // default duration is 1 hour
     var initialDuration = new Date();
@@ -52,10 +51,22 @@ const ModalContent = props => {
     travelTime.setMinutes(10);
     const [selectedTravelTime, setSelectedTravelTime] = React.useState(travelTime);
 
-    const [selectedLocation, setSelectedLocation] = useState("");
+    const [selectedLocation, setSelectedLocation] = useState(props.taskToUpdate.location);
     const [selectedPriority, setSelectedPriority] = useState("");
     const [selectedReminder, setSelectedReminder] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
+
+    useEffect(() => {
+        setSelectedName(props.taskToUpdate.title || "");
+        setSelectedDescription(props.taskToUpdate.description || "");
+        setSelectedDueDate(props.taskToUpdate.dueDate || "");
+        setSelectedDuration(convertMinutesToDateTime(props.taskToUpdate.duration));
+        setSelectedTravelTime(convertMinutesToDateTime(props.taskToUpdate.travelTime));
+        setSelectedLocation(props.taskToUpdate.location || "");
+        setSelectedCategory(props.taskToUpdate.category || "");
+        setSelectedPriority(props.taskToUpdate.priority || "");
+        setSelectedReminder(props.taskToUpdate.reminderType || "");
+    }, [props.taskToUpdate]);
 
     // ----- HANDLERS FOR INPUT FIELDS -----
     const handleNameChange = event => {
@@ -70,17 +81,10 @@ const ModalContent = props => {
         if (date > new Date()) {
             setSelectedDueDate(date);
         } else {
-            setSelectedDueDate("invalid date");
+            setSelectedDueDate("invalid beans");
         }
     };
 
-    const handleEarliestChange = date => {
-        if (date > new Date()) {
-            setEarliestDate(date);
-        } else {
-            setEarliestDate("invalid date");
-        }
-    };
     const handleLocationChange = event => {
         setSelectedLocation(event.target.value);
     };
@@ -97,24 +101,31 @@ const ModalContent = props => {
         setSelectedReminder(event.target.value);
     };
 
+    const convertMinutesToDateTime = minutes => {
+        const date = new Date();
+        date.setMinutes(minutes % 60);
+        date.setHours((minutes - (minutes % 60)) / 60);
+        return date;
+    };
+
     // ----- END HANDLERS FOR INPUT FIELDS -----
 
     // Task variables passed into calendar.js to add new task to the calendar
-    const handleAdd = event => {
+    const handleUpdate = event => {
         const task = {
+            taskId: props.taskToUpdate.taskId,
             title: selectedName,
             description: selectedDescription,
             dueDate: selectedDueDate,
-            earliestDate: selectedEarliestDate,
             duration: selectedDuration.getHours() * 60 + selectedDuration.getMinutes(),
             travelTime: selectedTravelTime.getHours() * 60 + selectedTravelTime.getMinutes(),
             location: selectedLocation,
             priority: selectedPriority,
-            category: selectedCategory,
             reminder: selectedReminder,
+            category: selectedCategory,
         };
 
-        props.addNewTask(task);
+        props.onTaskUpdated(task);
     };
 
     return (
@@ -139,6 +150,7 @@ const ModalContent = props => {
                                 },
                             }}
                             onChange={handleNameChange}
+                            defaultValue={selectedName}
                         />
                     </div>
                     <div>
@@ -147,6 +159,7 @@ const ModalContent = props => {
                             id="standard-basic"
                             label="Task description"
                             onChange={handleDescriptionChange}
+                            defaultValue={selectedDescription}
                         />
                     </div>
                     <div>
@@ -165,28 +178,6 @@ const ModalContent = props => {
                                 label="Due Date"
                                 value={selectedDueDate}
                                 onChange={handleDateChange}
-                                KeyboardButtonProps={{
-                                    "aria-label": "Change date/time",
-                                }}
-                            />
-                        </MuiPickersUtilsProvider>
-                    </div>
-                    <div>
-                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                            <KeyboardDateTimePicker
-                                disableToolbar
-                                autoOk={true}
-                                minDate={new Date()}
-                                minDateMessage="Date must be after now"
-                                invalidDateMessage="Date must be after now"
-                                variant="inline"
-                                format="MM/dd/yyyy HH:mm"
-                                ampm={false}
-                                margin="normal"
-                                id="date-picker-inline"
-                                label="Earliest Start"
-                                value={selectedEarliestDate}
-                                onChange={handleEarliestChange}
                                 KeyboardButtonProps={{
                                     "aria-label": "Change date/time",
                                 }}
@@ -229,6 +220,7 @@ const ModalContent = props => {
                             id="standard-basic"
                             label="Location"
                             onChange={handleLocationChange}
+                            defaultValue={selectedLocation}
                         />
                     </div>
                     <div className="drop-down">
@@ -269,18 +261,21 @@ const ModalContent = props => {
                                 <MenuItem value={5}>5 Minutes Before</MenuItem>
                             </Select>
                         </FormControl>
-                        <Button id="add-button" variant="contained" color="default" onClick={handleAdd}>
-                            ADD
-                        </Button>
                     </div>
                 </form>
+            </div>
+            <div id="add-button">
+                <Button variant="contained" color="default" onClick={handleUpdate}>
+                    Update
+                </Button>
             </div>
         </div>
     );
 };
 
-ModalContent.propTypes = {
-    addNewTask: PropTypes.func.isRequired,
+UpdateModalContent.propTypes = {
+    taskToUpdate: PropTypes.object.isRequired,
+    onTaskUpdated: PropTypes.func.isRequired,
 };
 
-export default ModalContent;
+export default UpdateModalContent;

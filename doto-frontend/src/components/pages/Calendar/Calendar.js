@@ -20,6 +20,7 @@ import "../Pages.css";
 import { v4 as uuidv4 } from "uuid";
 import { Themes } from "../../../constants/Themes";
 import SideBar from "./SideBar";
+import { ActiveHoursContext } from "../../../context/ActiveHoursContext";
 
 const classnames = require("classnames");
 
@@ -45,6 +46,9 @@ const Calendar = () => {
     const [tasks, setTasks] = useState([]);
     const [open, setOpen] = useState(false);
     const [theme, setTheme] = useContext(ThemeContext);
+    const { activeHoursStart, activeHoursEnd } = useContext(ActiveHoursContext);
+    const [startTime, setStartTime] = activeHoursStart;
+    const [endTime, setEndTime] = activeHoursEnd;
 
     const handleOpen = () => {
         setOpen(true);
@@ -62,19 +66,21 @@ const Calendar = () => {
         const fetchUserInfo = async () => {
             const userInfo = await DotoService.getUserInfo();
             setTheme(userInfo.themePreference);
+            setStartTime(userInfo.startTime);
+            setEndTime(userInfo.endTime);
         };
         fetchUserInfo();
         fetchTasks();
-    }, [setTheme]);
+    }, [setTheme, setStartTime, setEndTime]);
 
     // Adds new task based on input fields from Modal
-    const addNewTask = (newTask, currentDate) => {
-        const { newTaskOrder, updatedTask } = addTaskToSchedule(newTask, tasks, currentDate);
+    const addNewTask = async newTask => {
+        const { newTaskOrder, updatedTask } = addTaskToSchedule(newTask, tasks, new Date(startTime), new Date(endTime));
         newTask.taskId = uuidv4();
+        newTask.id = newTask.taskId;
         setTasks(newTaskOrder);
         handleClose();
-
-        DotoService.setNewTask(updatedTask);
+        await DotoService.setNewTask(updatedTask);
     };
 
     const deleteTask = async taskId => {
@@ -86,12 +92,47 @@ const Calendar = () => {
         await DotoService.deleteTask(taskId);
     };
 
-    const handleTaskStatusUpdated = taskId => {
+    const handleTaskStatusUpdated = async taskId => {
         const newTasks = [...tasks];
         const taskToUpdate = newTasks.find(task => task.taskId === taskId);
         taskToUpdate.isComplete = !taskToUpdate.isComplete;
-        DotoService.updateTask(taskToUpdate);
+        await DotoService.updateTask(taskToUpdate);
         setTasks(newTasks);
+    };
+
+    const handleTaskUpdated = async task => {
+        const taskList = [...tasks];
+        const index = taskList.findIndex(currentTask => currentTask.taskId === task.taskId);
+        taskList.splice(index, 1);
+        const { newTaskOrder, updatedTask } = addTaskToSchedule(task, taskList, new Date());
+        setTasks(newTaskOrder);
+        await DotoService.deleteTask(task.taskId);
+        await DotoService.setNewTask(updatedTask);
+        document.getElementById("grid").click(); // Debt: force close tool tip due to state not being updated
+    };
+
+    const onCommitChanges = ({ added, changed, deleted }) => {
+        // Currently adding and deleting are both no-ops
+        // TODO - consider refactoring adding and deleting to use built-in components and pass logic through here
+        if (changed) {
+            const updatedTasks = tasks.map(task => {
+                if (changed[task.id]) {
+                    const { startDate: newStartDate } = changed[task.id];
+                    const { reminderDate, startDate: oldStartDate } = task;
+                    if (newStartDate && reminderDate) {
+                        // Offset the reminder date by the difference of the start dates
+                        task.reminderDate = new Date(reminderDate.getTime() + (newStartDate - oldStartDate));
+                    }
+                    const updatedTask = { ...task, ...changed[task.id] };
+                    updatedTask.duration = Math.ceil((updatedTask.endDate - updatedTask.startDate) / 60000);
+                    DotoService.updateTask(updatedTask);
+                    return updatedTask;
+                }
+                return task;
+            });
+            updatedTasks.sort((a, b) => a.startDate - b.startDate);
+            setTasks(updatedTasks);
+        }
     };
 
     return (
@@ -130,6 +171,8 @@ const Calendar = () => {
                             tasks={tasks}
                             onTaskDeleted={deleteTask}
                             onTaskStatusUpdated={handleTaskStatusUpdated}
+                            onTaskUpdated={handleTaskUpdated}
+                            onCommitChanges={onCommitChanges}
                         />
                     </div>
                     {listView && <CalendarListView tasks={tasks} onTaskStatusUpdated={handleTaskStatusUpdated} />}

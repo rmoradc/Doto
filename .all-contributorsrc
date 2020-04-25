@@ -1,0 +1,146 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "KimberleyEvans-Parker",
+      "name": "Kimberley",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/45865186?v=4",
+      "profile": "https://github.com/KimberleyEvans-Parker",
+      "contributions": [
+        "code",
+        "review",
+        "design",
+        "ideas"
+      ]
+    },
+    {
+      "login": "AlexanderTheGrape",
+      "name": "Alex Monk",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/20546002?v=4",
+      "profile": "https://github.com/AlexanderTheGrape",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
+    },
+    {
+      "login": "Matteas-Eden",
+      "name": "Matt Eden",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/45587386?v=4",
+      "profile": "http://matteas.nz",
+      "contributions": [
+        "code",
+        "review",
+        "design",
+        "doc",
+        "test"
+      ]
+    },
+    {
+      "login": "jordansimsmith",
+      "name": "Jordan Sim-Smith",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/18223858?v=4",
+      "profile": "https://jordan.sim-smith.co.nz",
+      "contributions": [
+        "code",
+        "review",
+        "design",
+        "doc"
+      ]
+    },
+    {
+      "login": "qibao0722",
+      "name": "Xiaoji Sun",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/53366211?v=4",
+      "profile": "https://github.com/qibao0722",
+      "contributions": [
+        "code",
+        "design"
+      ]
+    },
+    {
+      "login": "PreetPatel",
+      "name": "Preet Patel",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/22407548?v=4",
+      "profile": "http://PreetPatel.com",
+      "contributions": [
+        "code",
+        "review",
+        "design",
+        "doc"
+      ]
+    },
+    {
+      "login": "EricPedrido",
+      "name": "Eric Pedrido",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/43208889?v=4",
+      "profile": "https://github.com/EricPedrido",
+      "contributions": [
+        "code",
+        "review",
+        "design",
+        "test"
+      ]
+    },
+    {
+      "login": "harmanlamba",
+      "name": "Harman Lamba",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/40023122?v=4",
+      "profile": "https://github.com/harmanlamba",
+      "contributions": [
+        "code",
+        "review",
+        "design",
+        "test"
+      ]
+    },
+    {
+      "login": "salma-s",
+      "name": "salma-s",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/43306586?v=4",
+      "profile": "https://github.com/salma-s",
+      "contributions": [
+        "code",
+        "review",
+        "design",
+        "test"
+      ]
+    },
+    {
+      "login": "Minus20Five",
+      "name": "Tony Liu",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/20623467?v=4",
+      "profile": "https://github.com/Minus20Five",
+      "contributions": [
+        "code",
+        "review",
+        "design",
+        "doc",
+        "test"
+      ]
+    },
+    {
+      "login": "HarrisonLeach1",
+      "name": "Harrison Leach",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/44953072?v=4",
+      "profile": "https://harrisonleach1.github.io",
+      "contributions": [
+        "code",
+        "review",
+        "design",
+        "test"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "Doto",
+  "projectOwner": "se701g2",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

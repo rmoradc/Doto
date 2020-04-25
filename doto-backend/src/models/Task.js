@@ -46,6 +46,21 @@ const taskSchema = mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    dueDate: {
+        type: Date,
+        required: true,
+    },
+    travelTime: {
+        type: Number,
+        required: true,
+    },
+    reminderType: {
+        type: Number,
+        required: false,
+    },
+    category: {
+        type: Number,
+    },
 });
 
 taskSchema.plugin(uniqueValidator);
