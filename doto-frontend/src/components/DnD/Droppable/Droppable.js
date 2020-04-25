@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 function Droppable(props) {
     const drop = e => {
         e.preventDefault();
-        this.props.handleOpen();
+        props.handleOpen();
     };
 
     const allowDrop = e => {

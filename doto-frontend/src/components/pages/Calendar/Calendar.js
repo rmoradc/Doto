@@ -21,6 +21,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Themes } from "../../../constants/Themes";
 import SideBar from "./SideBar";
 import { ActiveHoursContext } from "../../../context/ActiveHoursContext";
+import Droppable from "../../DnD/Droppable/Droppable";
 
 const classnames = require("classnames");
 
@@ -166,15 +167,18 @@ const Calendar = () => {
             <span className="content-container">
                 <Header title="Calendar" />
                 <div className="flex">
-                    <div className="calendar-component">
-                        <CalendarComponent
-                            tasks={tasks}
-                            onTaskDeleted={deleteTask}
-                            onTaskStatusUpdated={handleTaskStatusUpdated}
-                            onTaskUpdated={handleTaskUpdated}
-                            onCommitChanges={onCommitChanges}
-                        />
-                    </div>
+                    <Droppable handleOpen={handleOpen}>
+                        <div className="calendar-component">
+                            <CalendarComponent
+                                tasks={tasks}
+                                onTaskDeleted={deleteTask}
+                                onTaskStatusUpdated={handleTaskStatusUpdated}
+                                onTaskUpdated={handleTaskUpdated}
+                                onCommitChanges={onCommitChanges}
+                            />
+                        </div>
+                    </Droppable>
+
                     {listView && <CalendarListView tasks={tasks} onTaskStatusUpdated={handleTaskStatusUpdated} />}
                 </div>
                 <Modal
