@@ -1,3 +1,4 @@
+import { shiftTasks } from "./TaskShifter";
 const MILLISECONDS_PER_MINUTE = 60000;
 
 /**
@@ -12,10 +13,11 @@ const MILLISECONDS_PER_MINUTE = 60000;
  * @returns A chronologically ordered (based on startDate) array of all tasks scheduled with start/end
  * datetimes - essentially existingTasks + newTasks
  */
-const addTaskToSchedule = (newTask, existingTasks) => {
+const addTaskToSchedule = (newTask, existingTasks, startTime, endTime) => {
     // TODO: Take into account any possible gap between datetime and startDate of the first task in oldTasks
     // TODO: Take into account priority of tasks
     // TODO: Take into account location of tasks, add time gaps to allow for travel
+    // TODO: Take into account working hour restriction
 
     const competingTasks = [];
     const oldTasks = [];
@@ -92,8 +94,12 @@ const addTaskToSchedule = (newTask, existingTasks) => {
             }
             // Insert the new task at the specified index
             competingTasks.splice(i, 0, newTask);
+
+            // Shift the Tasks based on working hours
+            const { shiftedTasks } = shiftTasks([...oldTasks, ...competingTasks], startTime, endTime);
+
             return {
-                newTaskOrder: [...oldTasks, ...competingTasks],
+                newTaskOrder: shiftedTasks,
                 updatedTask: newTask,
             };
         }
@@ -112,8 +118,11 @@ const addTaskToSchedule = (newTask, existingTasks) => {
         (cTask && new Date(newTask.dueDate.getTime() + newTask.duration * MILLISECONDS_PER_MINUTE)) ||
         new Date(minDate.getTime() + newTask.duration * MILLISECONDS_PER_MINUTE);
 
+    // Shift the Tasks based on working hours
+    const { shiftedTasks } = shiftTasks([...existingTasks, newTask], startTime, endTime);
+
     return {
-        newTaskOrder: [...existingTasks, newTask],
+        newTaskOrder: shiftedTasks,
         updatedTask: newTask,
     };
 };
